@@ -14,7 +14,10 @@ def add_arguments():
             epilog='-- The computer was born to solve problems that did not exist before. --')
     ap.add_argument('-b', '--batch_size', type=int, default=32, help='Batch size, default is 32')
     ap.add_argument('-e', '--epochs', type=int, default=10, help='Number of epochs, default is 10')
-    ap.add_argument('-d', '--dataset_path', help='Give the path to the folder where tf.record files are located.')
+    ap.add_argument('-lp', '--lmdb_path', help='Give the path to the folder where the lmdb file is located.')
+    ap.add_argument('-tr', '--train_csv_path', help='Give the path to the train.csv file.')
+    ap.add_argument('-vl', '--val_csv_path', help='Give the path to the val.csv file.')
+    ap.add_argument('-te', '--te_csv_path', help='Give the path to the test.csv file.')
     ap.add_argument('-nt', '--noise_type', help='type of label noise to be added: symmetry, flip or none')
     ap.add_argument('-nr', '--noise_rate', type=float, help='rate of label noise to be added, use float: between 0. and 1.')
     ap.add_argument('-ch', '--channels', default='RGB', help='Decide what channels you want to load: RGB or ALL. Default is RGB.')
@@ -50,17 +53,15 @@ def main(args):
         NUM_OF_CLASSES = 19
 
     # Load the given dataset by user
-    if args['dataset_path']:  
+    if args['lmdb_path']:  
         '''
         train_dataset = load_archive(args['dataset_path'] + '/train.tfrecord', NUM_OF_CLASSES, args['batch_size'], 1000)
         test_dataset = load_archive(args['dataset_path'] + '/test.tfrecord', NUM_OF_CLASSES, args['batch_size'], 1000)
         val_dataset = load_archive(args['dataset_path'] + '/val.tfrecord', NUM_OF_CLASSES, args['batch_size'], 1000)
         '''
-        train_dataset = 0
-        test_dataset = 0
-        val_dataset = 0
+        train_data_loader, val_data_loader = load_archive(args['lmdb_path'], args['train_csv_path'], args['val_csv_path'], args['test_csv_path'], args['batch_size'])
     else:
-        raise ValueError('Argument Error: Give the path to the folder where tf.record files are located.')
+        raise ValueError('Argument Error: Give the path to the folder where the lmdb file is located.')
     
     # TODO: GET THE SHAPE FROM THE DATASET
     if args['channels'] == 'RGB':
@@ -72,7 +73,7 @@ def main(args):
     else:
         raise ValueError('Argument Error: Legal arguments are RGB and ALL')
 
-    run_together(net1, net2, train_dataset, test_dataset, val_dataset, args['epochs'], args['batch_size'], args['sigma'], args['swap_rate'], args['lambda_two'], args['lambda_three'])
+    run_together(net1, net2, train_data_loader, val_data_loader, args['epochs'], args['batch_size'], args['sigma'], args['swap_rate'], args['lambda_two'], args['lambda_three'])
     
     summarize_model(net1, net2)
 

@@ -18,7 +18,6 @@ import argparse
 import os
 import csv
 import json
-from tensorflow_utils import prep_tf_record_files
 from pytorch_utils import prep_lmdb_files
 
 GDAL_EXISTED = False
