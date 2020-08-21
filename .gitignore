@@ -1,1 +1,5 @@
-data/
+data/lmdbFiles
+code/__pycache__
+output/
+script/dct_gpu.sh
+script/dct_standard.sh

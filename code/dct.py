@@ -17,7 +17,7 @@ def add_arguments():
     ap.add_argument('-lp', '--lmdb_path', help='Give the path to the folder where the lmdb file is located.')
     ap.add_argument('-tr', '--train_csv_path', help='Give the path to the train.csv file.')
     ap.add_argument('-vl', '--val_csv_path', help='Give the path to the val.csv file.')
-    ap.add_argument('-te', '--te_csv_path', help='Give the path to the test.csv file.')
+    ap.add_argument('-te', '--test_csv_path', help='Give the path to the test.csv file.')
     ap.add_argument('-nt', '--noise_type', help='type of label noise to be added: symmetry, flip or none')
     ap.add_argument('-nr', '--noise_rate', type=float, help='rate of label noise to be added, use float: between 0. and 1.')
     ap.add_argument('-ch', '--channels', default='RGB', help='Decide what channels you want to load: RGB or ALL. Default is RGB.')
@@ -44,9 +44,6 @@ def summarize_model(net1, net2):
 
 def main(args):
 
-    if args['framework'] not in ('co', 'single'): 
-        raise ValueError('Enter "single" for a single model, enter "co" for collaborative model in the framework argument.')
-    
     if args['label_type'] == 'BigEarthNet-19':
         NUM_OF_CLASSES = 43
     elif args['label_type'] == 'original':

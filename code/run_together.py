@@ -5,11 +5,9 @@ def loss_fun(y, logits1, logits2, batch_size, l2_logits1, l2_logits12, sigma, sw
     optimizer = optim.Adam(net.parameters)
     ce = F.cross_entropy()
 
-def run_together(net1, net2, epochs, batch_size, sigma, swap_rate, lambda2, lambda3):
+def run_together(net1, net2, train_data_loader, val_data_loader, epochs, batch_size, sigma, swap_rate, lambda2, lambda3):
 
-    
-
-    for epoch in range(num_epochs):
+    for epoch in range(epochs):
 
         running_loss = 0.0
 
