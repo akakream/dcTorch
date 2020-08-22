@@ -15,7 +15,6 @@ def mmd(X,Y,sigma):
     reduced_dimY = reduce(lambda x,y: x*y, dims_to_reduceY)
    
     X = X.view(shapeX[0], reduced_dimX)
-    print(X.size())
     Y = Y.view(shapeY[0], reduced_dimY)
 
     K_XX = rbf_kernel(X,X,sigma)
@@ -87,6 +86,6 @@ def test_mmd():
     res = mmd(a,b,2.)
     print(res)
 
-test_mmd()
+#test_mmd()
     
 

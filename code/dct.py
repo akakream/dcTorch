@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import torch.backends.cudnn as cudnn
 from model import Net
 from run_together import run_together
 from load_archive import load_archive
@@ -44,6 +45,13 @@ def summarize_model(net1, net2):
 
 def main(args):
 
+    use_cuda = torch.cuda.is_available()
+    print(f"use_cuda: {use_cuda}")
+
+    if use_cuda:
+        torch.backends.cudnn.enabled = True
+        cudnn.benchmark = True
+
     if args['label_type'] == 'BigEarthNet-19':
         NUM_OF_CLASSES = 43
     elif args['label_type'] == 'original':
@@ -65,10 +73,14 @@ def main(args):
         net1 = Net('SCNN_1', NUM_OF_CLASSES, args['batch_size'], args['epochs'], 3)
         net2 = Net('SCNN_2', NUM_OF_CLASSES, args['batch_size'], args['epochs'], 3)
     elif args['channels'] == 'ALL':
-        net1 = Net('SCNN_1', NUM_OF_CLASSES, args['batch_size'], args['epochs'], 12)
-        net2 = Net('SCNN_2', NUM_OF_CLASSES, args['batch_size'], args['epochs'], 12)
+        net1 = Net('SCNN_1', NUM_OF_CLASSES, args['batch_size'], args['epochs'], 10)
+        net2 = Net('SCNN_2', NUM_OF_CLASSES, args['batch_size'], args['epochs'], 10)
     else:
         raise ValueError('Argument Error: Legal arguments are RGB and ALL')
+    
+    if use_cuda:
+        net1.cuda()
+        net2.cuda()
 
     run_together(net1, net2, train_data_loader, val_data_loader, args['epochs'], args['batch_size'], args['sigma'], args['swap_rate'], args['lambda_two'], args['lambda_three'])
     
@@ -76,15 +88,6 @@ def main(args):
 
     # save_model(net1, net2)
 
-    '''
-    # INPUT                                                                         
-    inp = torch.randn(1,3,120,120)                                                  
-    output = net(inp)                                                               
-    print(output) 
-    '''
-
-
 if __name__ == '__main__':
     args = add_arguments()
     main(args)
-

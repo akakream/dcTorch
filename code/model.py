@@ -22,10 +22,11 @@ class Net(nn.Module):
         # Max pooling over a (2, 2) window
         x = F.max_pool2d(F.relu(self.conv1(x)), (2, 2))
         x = F.max_pool2d(F.relu(self.conv2(x)), (2, 2))
+        l2_logits = x
         x = F.max_pool2d(F.relu(self.conv3(x)), (2, 2))
         x = x.view(-1, self.num_flat_features(x))
-        x = F.sigmoid(self.fc1(x))
-        return x
+        x = self.fc1(x)
+        return x, l2_logits
 
     def num_flat_features(self, x):
         size = x.size()[1:]  # all dimensions except the batch dimension
